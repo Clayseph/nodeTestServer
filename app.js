@@ -10,46 +10,11 @@ var app = express();
 
 var port = process.env.PORT || 3000;
 
-var router = express.Router();
+var router = require('./Routers/movieRouter')(Movie);
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use('/api', router);
-
-
-router.route('/Movies')
-    .post(function(req, res) {
-        var movie = new Movie(req.body);
-        movie.save();
-        res.status(201).send(movie);
-
-    })
-    .get(function(req,res) {
-        var query = {};
-        if(req.query.director){
-            query.director = req.query.director;
-        }
-        
-        Movie.find(query, function (err, movies){
-            if(err){
-                res.status(500).send(err)
-            }else{
-                res.json(movies)
-            }
-        });
-    });
-
-router.route('/Movies/:movieId')
-    .get(function(req,res){
-        Movie.findById(req.params.movieId, function(err,movie) {
-            if(err){
-                res.status(500).send(err);
-            } else {
-                res.json(movie);
-            }
-        })
-    })
-
 
 app.get('/', function(req,res) {
     res.send('Welcome to the api');
